@@ -1,0 +1,46 @@
+GET http://localhost:8000/users/me
+###
+GET http://localhost:8000/users/hong/items/2
+###
+GET http://localhost:8000/fruits/orange
+###
+GET http://localhost:8000/items
+content-Type: application/json
+
+{
+  "name": "rudaks",
+  "category": "study"
+}
+###
+POST http://localhost:8000/request_body/items
+content-Type: application/json
+
+{
+  "name": "apple",
+  "price": "10000"
+}
+
+###
+POST http://localhost:8000/request_body/items
+content-Type: application/json
+
+{
+  "name": "Laptop",
+  "price": 999.99,
+  "seller": {
+    "name": "TechStore",
+    "rating": 4.8
+  }
+}
+###
+POST http://localhost:8000/request_body/categories/electronics/items/?discount=10.0
+content-Type: application/json
+
+{
+    "name": "Laptop",
+    "price": 999.99
+}
+###
+GET http://localhost:8000/items?name=rudaks
+###
+GET http://localhost:8000/search?query=abc
