@@ -44,3 +44,161 @@ content-Type: application/json
 GET http://localhost:8000/items?name=rudaks
 ###
 GET http://localhost:8000/search?query=abc
+###
+PUT localhost:8000/items/1?q=update
+content-Type: application/json
+
+{
+  "item": {
+    "name": "apple",
+    "description": "fresh apple",
+    "price": 10000,
+    "tax": 1000
+  }
+}
+###
+POST http://localhost:8000/field/items/
+content-Type: application/json
+
+{
+  "name": "apple",
+  "description": "fresh apple",
+
+  "tax": 1000
+}
+###
+POST http://localhost:8000/datatype/items/
+content-Type: application/json
+
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "name": "apple"
+}
+###
+POST http://localhost:8000/datatype/events/
+content-Type: application/json
+
+{
+  "name": "apple",
+  "event_datetime": "2024-08-16 10:00:00"
+}
+###
+POST http://localhost:8000/datatype/events/
+content-Type: application/json
+
+{
+  "name": "apple",
+  "event_date": "2024-08-16"
+}
+###
+POST http://localhost:8000/datatype/schedules/
+content-Type: application/json
+
+{
+  "name": "apple",
+  "start_time": "10:00:00"
+}
+###
+POST http://localhost:8000/datatype/tasks/
+content-Type: application/json
+
+{
+  "name": "apple",
+  "duration": "1:30:00"
+}
+###
+POST http://localhost:8000/datatype/collections/
+content-Type: application/json
+
+{
+  "tags": ["red", "blue", "green"]
+}
+###
+POST http://localhost:8000/datatype/files/
+content-Type: application/json
+
+{
+  "file_name": "example.txt",
+  "data": "SGVsbG8gV29ybGQh"
+}
+###
+POST http://localhost:8000/datatype/items/123e4567-e89b-12d3-a456-426614174000
+content-Type: application/json
+
+{
+  "start_datetime": "2024-08-16T10:00:00",
+  "end_datetime": "2024-08-16T12:00:00",
+  "process_after": "0:20:00",
+  "repeat_at": "06:30:00"
+}
+###
+GET http://localhost:8000/cookie/get-cookie
+###
+GET http://localhost:8000/cookie/get-cookies
+###
+GET http://localhost:8000/cookie/get-cookie-default
+###
+GET http://localhost:8000/cookie/validate-cookie
+###
+GET http://localhost:8000/header/get-header
+X-My-Header: my-header
+###
+GET http://localhost:8000/header/get-header-default
+###
+GET http://localhost:8000/header/get-required-header
+###
+GET http://localhost:8000/header/validate-header
+###
+GET http://localhost:8000/response_model/user/1
+
+###
+POST http://localhost:8000/login
+content-Type: application/x-www-form-urlencoded
+
+username=hong&password=1234
+###
+POST http://localhost:8000/formdata/submit
+content-Type: application/x-www-form-urlencoded
+
+name=hong&age=22
+###
+POST http://localhost:8000/formdata/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary--
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+< ./test.http
+--WebAppBoundary--
+###
+POST http://localhost:8000/items
+content-Type: application/json
+
+{
+  "name": "apple",
+  "price": 10000,
+  "is_active": true
+}
+###
+POST http://localhost:8000/items2
+content-Type: application/json
+
+{
+  "name": "apple",
+  "price": 10000,
+  "created_at": "2024-01-01 12:00:00"
+}
+###
+GET http://localhost:8000/request
+###
+POST http://localhost:8000/users
+content-Type: application/json
+
+{
+  "name": "hong2",
+  "password": "1111",
+  "email": "hong21@example.com"
+}
+###
+GET http://localhost:8000/users/11
