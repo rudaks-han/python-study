@@ -1,0 +1,26 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  console_handler:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+  file_handler:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: simple
+    filename: app.log
+root:
+  level: WARN
+  handlers: [console_handler, file_handler]
+
+loggers:
+  main_logging_config:
+    level: INFO
+    handlers: [console_handler, file_handler]
+    propagate: false
