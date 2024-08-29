@@ -1,4 +1,5 @@
 import logging
+import time
 
 from fastapi import FastAPI
 
@@ -43,3 +44,9 @@ def home():
     logger.warn("warn log")
     logger.error("error log")
     return "home"
+
+
+@app.get("/sleep")
+def sleep_api():
+    time.sleep(0.2)
+    return "ok"
