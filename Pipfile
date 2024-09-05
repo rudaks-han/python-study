@@ -10,6 +10,7 @@ black = "*"
 sqlalchemy = "*"
 asyncpg = "*"
 psycopg2-binary = "*"
+mypy = "*"
 
 [dev-packages]
 

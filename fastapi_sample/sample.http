@@ -1,0 +1,22 @@
+// 기본 요청
+#
+GET http://localhost:8000/users/1
+
+### Request
+GET http://localhost:8000/users/1
+
+###
+# @name AnotherRequest
+GET http://localhost:8000/users/2
+
+###
+# @name AnotherRequest
+GET http://localhost:8000/users/3
+
+###
+GET http://localhost:8000/users/1?
+    q=dummy&
+    limit=10&
+    offset=0&
+    sort=asc&
+    job=developer

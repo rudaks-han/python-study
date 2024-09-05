@@ -42,14 +42,17 @@ Request 2
     start
     end
 """
+
+
 @app.get("/async_sync")
 @elapsed_time_async
-async def async_sync(): # processed sequentially
+async def async_sync():  # processed sequentially
     print("start")
-    time.sleep(3) # Blocking I/O Operation, cannot be await
+    time.sleep(3)  # Blocking I/O Operation, cannot be await
     # Function execution cannot be paused
     print("end")
     return "ok"
+
 
 """
 main thread에서 실행
@@ -63,25 +66,31 @@ Request 1
 Request 2
     end
 """
+
+
 @app.get("/async_async")
 @elapsed_time_async
-async def async_async(): # processed concurrently
+async def async_async():  # processed concurrently
     print("start")
-    await asyncio.sleep(3) # Non-blocking I/O Operation
+    await asyncio.sleep(3)  # Non-blocking I/O Operation
     # Function execution paused
     print("end")
     return "ok"
 
+
 """
 개발 thread에서 실행, 병렬로 실행되어야 함.
 """
+
+
 @app.get("/sync")
 @elapsed_time
-def sync_sync(): # processed concurrently
+def sync_sync():  # processed concurrently
     print("start")
     time.sleep(3)
     print("end")
     return "ok"
+
 
 # Uvicorn > Main Thread
 # Uvicorn을 실행하면 하나의 쓰레드로 실행한다. main thread라고 한다.
@@ -94,3 +103,8 @@ BEST PRACITCE
 2. blocking I/O operation에서는 async를 사용하지 말자.
 3. blocking I/O operation에서는 기본 함수를 사용하자. (예: await를 지원하지 않는 DB 라이브러리, time.sleep)
 """
+
+
+@app.get("/users/{user_id}")
+def find_user(user_id: int):
+    return {"user_id": user_id}
