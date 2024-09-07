@@ -1,0 +1,21 @@
+GET localhost:8000/users/1
+###
+POST localhost:8000/users
+content-Type: application/json
+
+{
+  "userId": 1,
+  "userName": "홍길동",
+  "age": 20,
+  "favoriteFoods": ["라면", "김밥"]
+}
+###
+POST localhost:8000/users
+content-Type: application/json
+
+{
+  "user_id": 1,
+  "user_name": "홍길동",
+  "age": 20,
+  "favorite_foods": ["라면", "김밥"]
+}

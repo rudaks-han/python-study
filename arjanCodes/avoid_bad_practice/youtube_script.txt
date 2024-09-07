@@ -1,0 +1,399 @@
+Is your object-oriented Python code turning into unmanageable spaghetti?
+Today, I'll cover bad practices to avoid at all costs, and what to do instead.
+The first bad practice is that you have a function masquerading as a class.
+1 A Function Masquerading as a Class
+And this is actually quite common, where you start using a class.
+In this particular example, we have a DataLoader class.
+And actually, when you look at this, this DataLoader class is very simple.
+It just has one method and an initializer.
+If you are sure that you're going to add more methods to the class,
+that there is data that these methods all need access to,
+that you need multiple instances of this class, then it makes sense to use a class.
+If not, just use a function instead.
+In this case, there is no need for us to have a DataLoader class.
+We can turn this into a function. Let's do that right now.
+So then, what I'll do is I'll take this method,
+the intent is, and instead of self, we simply pass the file path.
+This is, by the way, an object of type path from pathlib.
+So self is no longer needed here.
+And then I can remove this whole class here.
+And the nice thing about this is that I now no longer need to create an instance.
+Before I can actually use it, I can simply do load,
+and then I pass the data that it needs.
+Like so.
+This has simplified the code a lot.
+Let me run this just to make sure that it works.
+And it does. This is the data that it has loaded from the file.
+If you're using classes a lot in this way, just containers for methods,
+that often adds unnecessary complexity and boilerplate code,
+because then you have to create an instance of the class to call that method.
+An alternative is to add static methods,
+but then you still have to do className.method instead of just calling the function.
+If a class is very basic, just has one method, you can simply use a function,
+which is also typically a bit easier to read.
+2 A Module Masquerading as a Class
+The second example is sort of related to this.
+This is another example of using a class
+where actually there is a simpler way to do it, at least in Python.
+So if you have this type of class, in this case, this is a StringProcessor class
+that has a couple of helpful methods to do stuff with strings,
+there is actually no reason to actually create an instance of this class, right?
+But if we want to call a method like counting words,
+then let's create a main function to write that.
+Then to call these methods, I have to actually do StringProcessor.reverseAndUpperCase,
+or remove vowels or count words.
+Let me add that as well, and let's also run the code to see what it actually does.
+So this is, of course, extremely useful, but when you look at this,
+the class and the static method decorators just add complication.
+In Python, you can use a module instead.
+That's code in a separate file that you then import elsewhere.
+So in this particular example, I could take this code,
+and then I can paste it in a different file called StringUtils.
+And now I can simply remove the whole StringProcessor class.
+And let me de-indent this.
+And now this is just a module in Python.
+And now I can go here in this code, and then I can do from StringUtils,
+and then I'm going to import reverseAndUpgrade, remove vowels, and count words.
+And now I also no longer need the StringProcessor class name here, like so.
+When I run this again, we get exactly the same result as before,
+but now it's in a separate module.
+The reason you want to avoid using a class instead of a module
+is that it's sort of a misleading use of object-oriented concepts.
+The whole idea of a class is that you create an instance of it.
+And if you don't need an instance of it,
+then it's debatable whether it's really helpful to use a class for that.
+In some languages, like Java, everything needs to be in a class, so you have no choice.
+Well, you could maybe switch to another programming language,
+but that's not always possible because of other constraints.
+In Python, I tend to start with functions and modules instead of classes,
+as I find that typically leads to simpler code.
+Only if you have data and closely associated behavior,
+or if you know you're going to need multiple instances,
+then a class is a good choice.
+And by the way, these are typical discussions that come up in software design.
+If you want to learn more about what you need to consider
+when you're designing your software,
+check out my free design guide at arjan.codes/designguide.
+This contains the seven steps that I take when I design a new piece of software.
+Hopefully, this will help you avoid some of the mistakes that I made in the past.
+arjan.codes/designguide.
+The link is also in the description.
+The third bad practice is creating overly complex inheritance structures.
+3 Complex Inheritance structures
+Often people try to avoid or decouple code by using inheritance,
+and this often just makes things worse.
+There is a set of principles called the solid principles.
+They've been proposed by Robert Martin.
+The S specifically stands for the single responsibility principle.
+Now, you want to split up code so that each part has its specific responsibility.
+And inheritance is not really a good way to do that,
+because you introduce a lot of coupling.
+The subclass is very much dependent on the superclass.
+So here I have an example where we have an employee class
+that has a getDetails method.
+It's a very simple basic example, of course.
+You'll normally have more complex things here.
+But then I sort of abuse the inheritance mechanism
+to describe the role of the particular employee.
+So we have a manager, we have a senior manager, a director,
+and the implementation of getDetails changes every time.
+That determines the role.
+When I run this, we simply get this.
+So it's very basic.
+But this is not really a good way to organize things.
+I'm trying to use inheritance to describe a role,
+and that's not really a good way to go about it.
+So it's better to flatten the hierarchy and use composition instead of inheritance.
+So what you could do here, for example, is instead of overriding this method
+to do something else, depending on the subclass,
+we could also introduce a role class, or an enum, actually.
+So let me import a string enum.
+And then I'm going to define a class role, which is a string enum.
+And that's going to have an employee, a manager, a senior manager, and a director.
+And then instead of having all these different subclasses,
+I'm going to delete all of these.
+And I'm going to add an initializer here.
+And that gets a role, and we assign a role to the employee.
+And then getDetails simply returns the role.
+Or actually, we can just do this, like so.
+That's a bit shorter.
+And now, instead of creating these instances here,
+we simply create employees with a specific role.
+And now when we run this, of course, we get exactly the same result.
+But now we no longer have this inheritance hierarchy.
+We simply have an employee class, a single class, that has a role instance variable.
+And that's the basic idea of composition.
+And this is, of course, a really simple example.
+But as you add more inheritance hierarchies throughout your code,
+that's just going to increase complexity.
+And it's going to make it harder to maintain your code.
+Also, it will be harder to understand and extend later.
+Because then for every new role type,
+you're going to need to introduce a new subclass.
+So composition typically is easier.
+It's simpler to set up, simpler to manage.
+So whenever you're using inheritance,
+really think about whether that's actually the right way to go.
+In many cases, I can find a better solution that uses composition.
+And by the way, there's another type of inheritance that's used a lot in Python
+that's, in my opinion, even worse than this.
+So make sure you stick around until the end of the video,
+where I'll show you what that is and how to solve it.
+The fourth bad practice is that you don't rely on abstractions.
+4 Not Relying on Abstractions
+Basically, directly calling methods,
+constructing objects from other classes within a method or a function.
+Here you see an example of that.
+I have an order class that has a customer email, a product ID, and a quantity.
+Very basic.
+And I also have an SMTP email service,
+which is used to connect to a server and then sending an email to a customer.
+Then I have a process order function that creates this email service,
+makes the connection, and then sends an email to the customer about a particular order.
+And then there's a simple main function that creates an order and calls process order.
+So let me run this then.
+Well, this is what we get.
+My order has been processed.
+The issue with creating the email service object here is that
+it removes a lot of flexibility from the process order function,
+because now we can only use it with this very specific email service.
+It also makes it a lot harder to test this function,
+because every time I call it,
+it creates an actual email service and sends an actual email, which is not ideal.
+Especially if you're the recipient of this particular order's email address.
+What you can do in object-oriented code is that you make sure that
+creating an object and using an object doesn't happen in the same place.
+So in this case, you want to take this line of code,
+where you create the email service, and move that out of process order.
+So a good place is then in the main function.
+And then, of course, process order needs an email service as an argument.
+Like so.
+And now we can simply create it here in the main function,
+and then I can pass it along as an argument.
+Like so.
+So let's run this just to make sure this still does exactly the same thing, and it does.
+Now it's already easier to change things because I could, for example,
+create a subclass of SMTP email service and change things
+and then pass that to process order that would work.
+But an even better solution than supplying the email service here
+is to actually use an abstraction.
+Before I do that, one more change I'm going to make to this code
+is that actually I think connecting to the server
+is not something that should happen in process order.
+We could actually do that here.
+And then process order only deals with actually sending the email.
+And we probably want to add a few lines here as well,
+such as marking an order as processed or something like that.
+But what you can do with abstractions
+is that we can now make process order independent from the SMTP email service.
+And we can do that in Python by, for example, using a protocol class.
+And then I'm going to create a new class.
+Let's call that email service, which is a protocol class.
+And that has a send email method.
+And here, instead of passing an SMTP email service,
+I'm simply passing an email service protocol.
+And now this still does exactly the same.
+I basically only changed the type annotations, right?
+And I introduced this extra class.
+But now process order can get any type of email service.
+I could create an IMAP email service that works differently
+as long as it has a send email method.
+We're good to go.
+And that's also what process order relies on.
+You can also use an abstract base class for that in Python.
+The general idea is that these things serve as sort of contract and interface.
+And once you have that, it's easier to replace it with something else.
+So, for example, if you need to write a test for process order,
+I could simply create a mock email service
+and supply that to the process order function.
+And I don't need to create an actual email service.
+5 Ignoring Encapsulation
+The fifth bad practice is to not have encapsulation.
+If you have a class, in this case, there's a bank account class that has a balance.
+And the way that we work with a bank account in this example
+is that we directly modify the balance.
+We subtract 50, we add 100.
+Encapsulation means that you hide implementation details from the outside world.
+This is what methods properties allow you to do in a class.
+So if we allow other code to directly modify the internal representation,
+in this case, that's the balance,
+then that can lead to all sorts of problems.
+For example, I could now simply subtract a much higher amount
+because we're directly modifying it.
+There is no check, nothing.
+But, of course, if there is a balance of 100,
+I shouldn't be able to take out 150
+unless we also have a system for loans and that kind of stuff.
+Instead of modifying the balance directly,
+we can also create an encapsulated version of this bank account
+by, for example, first putting an underscore in front of balance
+so that it's clear to the user of the class
+that underscore balance is something internal
+that we're not supposed to be using.
+In languages like Java, you can add a protected or a private modifier
+for instance variables like this.
+Python doesn't have this, but at least this is something that you can do.
+It's not a guarantee. You can actually still change it,
+but at least we indicate in the code
+that this is not supposed to be changed directly.
+Now, the second thing that we can do is add a, let's say, a property, balance,
+and that actually gives us the value of the balance.
+So now we can still print the balance of the account.
+The second thing that I'm going to do is add a withdraw method.
+So we supply an amount, and then we withdraw it from the balance.
+But, of course, we only do that if there is enough balance.
+So if the amount is higher than the balance, then we raise a value error.
+And then we can also do a deposit, which works in a much similar way.
+There we simply add the amount to the balance,
+but we, of course, also want to make sure that the amount is actually positive.
+So if the amount is less than zero, actually zero is, I guess, allowed.
+That's possible. But if it's less than zero,
+then we raise a value error that must be positive.
+And then instead of directly modifying it here,
+we simply call these methods.
+So we have withdraw, and we have deposit, like so.
+Let's run this to see what happens.
+So, yeah, it prints the current balance, which is 75.
+So now I have encapsulated the internal representation of the balance,
+which is this particular instance variables.
+And outside of that class, we use methods and properties to interact with it.
+The nice thing about this approach is that we can add these types of validations
+so that we ensure an internal consistency of a bank account instance,
+which also makes it easier to find bugs.
+Another way this can be helpful is perhaps on the outside,
+we still want to work with these integer values,
+but internally we may want to use a decimal value, right?
+So then in this case, we can simply change the internal representation.
+We change the code here so that withdraw and deposit work with integers,
+and we're good to go.
+We don't need to change anything in the main function.
+Or another example of why you want to encapsulate something is,
+let's say you interact with a database,
+and you want to store a field in the database that contains JSON data.
+Well, perhaps your relational database doesn't support that,
+so you need to store it as a string.
+So then your class, that's kind of an ORM layer on top of a table on a database,
+can contain a getter and a setter that take JSON data
+and then store it internally as a string.
+So you use a parser and you use a stringify method
+to turn JSON into string and vice versa.
+So there's lots of reasons why you want to use encapsulation.
+Now, there's also a situation where you don't want to have encapsulation,
+6 Excessive Use of Getters and Setters
+and that's if you have a very data-focused class.
+In this case, I have a person class.
+A person simply has a name and an age.
+That's it.
+And I've encapsulated name and age here, right there.
+I have an underscore.
+But if you look at how I modify them, I have getName, setName, getAge, setAge.
+Nothing is happening here,
+because person is really nothing more than just a container for some data.
+So the encapsulation here serves no purpose
+except for me getting painful fingers for typing this code all the time.
+And this is something I commonly see, especially in my older Java code,
+where I actually did this a lot,
+and I always created a bunch of getters and setters.
+It took me a lot of time to write code.
+Nowadays, I'm less inclined to do that.
+So instead of doing this with the getters and setters,
+if you really don't need that type of specific behavior or validation,
+you can just use direct attribute access.
+So in this case, what I would actually do is change person into a data class.
+And in that case, person would just have a name and an age,
+and then I can throw away all of this code.
+There we go.
+And now I can simply access these attributes directly.
+Like so.
+So this very much simplifies the code.
+This is what happens when we run this.
+So even though person is now less encapsulated,
+it's also a very basic data representation.
+So we don't really need all that extra over-engineered boilerplate code.
+And by the way, if you enjoy these types of discussions,
+make sure to join my Discord server at discord.arjan.codes.
+It's a really awesome community.
+Love for you to join.
+The final bad practice I want to talk about is mixing.
+7 Heavily Relying on Mixins
+Yes.
+Overusing mixins to add functionality to existing classes
+can really lead to complicated and hard-to-trace class hierarchies.
+For example, here I have an order class.
+I have a log mixin, which has a log method.
+I have a save mixin, which has a save method.
+And then I'm mixing in those features into other classes,
+like processing an order and canceling an order.
+So I'm using these mixins here to add small pieces of functionality
+across multiple classes.
+The problem with mixins like this,
+that it can really easily create very complex, brittle hierarchies.
+Like I mentioned before,
+inheritance is one of the strongest types of coupling there is.
+And now we're even using multiple inheritance.
+In some languages, that's even forbidden to do.
+You're not even allowed to do that,
+because it leads to all sorts of problems.
+And actually, in many cases,
+you can come up with a solution that doesn't use mixins,
+but uses composition instead.
+So for example, here, the way to solve this,
+if you want to keep these classes,
+you could also change this to functions,
+but if you want to keep these classes,
+then you could change process order to not use mixins like this,
+but instead have an initializer
+that gets a saver and a logger.
+And does this need self?
+and then we store them as instance variables and then here we do this and we call the methods on
+these instances that we stored as part of the class. So instead of using mixins and inheritance
+we're simply storing the instances as part of the object. I can do the same for cancelOrder
+like so and I'm going to remove the inheritance relationship like so
+and then what we're doing here is we create the logger we also create the saver
+and then we pass them to these objects when we create them
+like so. Let me run this to see what happens. So we get some logs and we get a message that
+the data is saved and then of course you probably want to change the names because
+this is no longer a mixin. So let's change this to logger and here same. Let's change this to
+saver like so. That's already a bit better. In this case actually I wouldn't use classes at
+all because these classes are like really simple. So what I would do is not have these
+logger and saver classes but I would simply have my functions like so which is of course much simpler
+and for these classes we can actually do the same thing. So instead of creating instances and
+storing the saver and the logger we can also pass the functions. So then let's call this process
+order and we're going to pass a saver and a logger
+like so and for canceling an order we can do actually the same thing. So let me copy that
+let's also add the saver and the logger here
+and this is no longer needed. So we now have basically four functions and that's it. So now
+I don't have to create all these objects but I can simply do process order and then I pass
+the order and the save function and the log function and then I'm doing a cancel order
+that also gets the order and the functions. So let me run this this will have exactly the same
+effect. Now of course here the example is really basic so this allows me to do that.
+It may not always be possible to throw out all the class and replace them by functions.
+Let's still clean this code up a little bit because I don't like that I don't have type
+annotations here. So what I'm going to do since Python 3.12 there is a nice way to define a type
+alias. So I'm going to import from the typing module the callable type which is what a function
+is. And then I'm going to create a type alias. So we have a save function which is a callable
+that gets no arguments and returns none. That's the signature of the save function. And I can
+also create a log function that's also a callable that gets a string and returns none. So now I can
+supply those types here. So saver is the save function and logger is the log function like so.
+And I'm going to do the same thing for cancel order like so. Let's run this one more time and
+yes we have exactly the same result. So here I went from code that had pretty complex inheritance
+Final thoughts
+hierarchy to a really simple setup with just a few functions. And this is also why I like
+functions so much. They really lead to a lot simpler code and you don't always need object
+oriented code. Now you might say okay so bad practice of object oriented code is that then
+writing object oriented code instead of functions. It's not really what I want to say. I think there
+are definitely cases where classes can be helpful. For example if you have data and methods that work
+on the data and you need multiple instances of that then a class definitely makes sense. I also
+like to use classes for these sort of basic data structures as opposed to let's say an unstructured
+dictionary because this helps me in the IDE for quickly pointing out errors while I'm trying to
+access the fields. And with dictionaries well I may add a typo and you will only find out when you
+try to run the code. So I like using classes for this as well. But overall don't use a class if
+you can use a function or module instead. Avoid deep inheritance hierarchies. Use abstractions
+to decouple your code like protocols or abstract based classes. And make sure you encapsulate
+behavior but don't overdo it and add a bunch of getters and setters if it's just a simple data
+object. And finally if you can use composition instead of mixins. Now I'd like to hear from you.
+What are your thoughts on these bad practices? Do you agree? Do you have any tips for writing
+better object-oriented code? Let me know in the comments below. If you do prefer a more functional
+style of coding there are a couple of really helpful concepts you need to know about like
+higher order functions and partial function application. If you want to learn more about
+those and how to use them in Python check out this video next. Thanks for watching and see you next time.
