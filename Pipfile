@@ -11,6 +11,7 @@ sqlalchemy = "*"
 asyncpg = "*"
 psycopg2-binary = "*"
 mypy = "*"
+icecream = "*"
 
 [dev-packages]
 
