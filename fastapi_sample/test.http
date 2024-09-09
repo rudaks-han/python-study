@@ -1,0 +1,9 @@
+GET localhost:8000/camelcase
+###
+POST http://localhost:8000/camelcase
+content-Type: application/json
+
+{
+  "userId": "rudaks",
+  "name": "rudaks"
+}

@@ -1,8 +1,12 @@
 import asyncio
 import time
 from functools import wraps
+from typing import Annotated
 
-from fastapi import FastAPI
+from pydantic import BaseModel, Field
+from pydantic.alias_generators import to_camel, to_snake
+
+from fastapi import FastAPI, Query
 
 
 def elapsed_time(func):
@@ -103,6 +107,47 @@ BEST PRACITCE
 2. blocking I/O operation에서는 async를 사용하지 말자.
 3. blocking I/O operation에서는 기본 함수를 사용하자. (예: await를 지원하지 않는 DB 라이브러리, time.sleep)
 """
+
+
+
+class UserCdo(BaseModel):
+    # user_id: str = Field(..., alias='userId')
+    user_id: Annotated[str, Field(alias="userId")]
+    name: str
+
+    class Config:
+        alias_generator = to_snake
+        populate_by_name = True  # 필드 이름을 사용해 값 할당 허용
+
+class User(BaseModel):
+    user_id: str
+    name: str
+
+class UserRdo(BaseModel):
+    # user_id: str
+    user_id: str = Field(description="Bot 아이디", alias="userId")
+    name: str
+
+    class Config:
+        alias_generator = to_camel
+        populate_by_name = True  # 필드 이름을 사용해 값 할당 허용
+
+
+@app.get("/camelcase")
+def camelcase():
+    user = User(user_id="rudaks", name="루닥스")
+    user_rdo = UserRdo(user_id=user.user_id, name=user.name)
+    # user_rdo = UserRdo(user)
+
+    return user_rdo
+
+@app.post("/camelcase")
+def camelcase(
+        user_cdo: UserCdo
+):
+    print(user_cdo)
+    print("user_id:", user_cdo.user_id)
+
 
 
 @app.get("/users/{user_id}")
