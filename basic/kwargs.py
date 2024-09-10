@@ -28,6 +28,9 @@ class UserRdo(BaseModel):
             address="서울시 강남구"
         )
 
-print(UserRdo.sample())
+    def to_json(self):
+        return json.loads(self.sample().model_dump_json())
+print(UserRdo.sample().to_json())
+
 
 
