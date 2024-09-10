@@ -6,4 +6,4 @@ GET http://localhost:8000/streaming_sync/chat?query=한국의 수도는?
 ###
 GET http://localhost:8000/streaming_async/chat?query=한국의 수도는?
 ###
-GET http://localhost:8000/openai
+POST http://localhost:7777/v1/chat/completions

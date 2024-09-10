@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
 black = "*"
 sqlalchemy = "*"
 asyncpg = "*"
@@ -15,7 +14,8 @@ pydantic-settings = "*"
 langchain = "*"
 langchain-openai = "*"
 python-dotenv = "*"
-uvicorn = "*"
+"uvicorn[standard]" = "*"
+fastapi = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 
