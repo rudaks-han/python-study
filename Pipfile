@@ -12,6 +12,7 @@ asyncpg = "*"
 psycopg2-binary = "*"
 mypy = "*"
 icecream = "*"
+pydantic-settings = "*"
 
 [dev-packages]
 
