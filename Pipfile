@@ -5,13 +5,16 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
-uvicorn = "*"
 black = "*"
 sqlalchemy = "*"
 asyncpg = "*"
 psycopg2-binary = "*"
 mypy = "*"
 icecream = "*"
+langchain = "*"
+langchain-openai = "*"
+python-dotenv = "*"
+uvicorn = "*"
 
 [dev-packages]
 
