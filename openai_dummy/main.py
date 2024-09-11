@@ -1,42 +1,44 @@
+import os
+import sys
+
+from starlette.responses import StreamingResponse
+
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
 
-from schemas import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-app = FastAPI(
-    title="DWorks AI Mock Server",
-    version="0.5.0",
-    description="DWorks AI Mock Server for test",
+from openai_dummy.openai_model import (
+    CreateChatCompletionRequest,
+    CreateChatCompletionResponse,
 )
 
-response_json = {
-    "id": "dummy-id",
-    "object": "chat.completion",
-    "created": 1234567890,
-    "model": "gpt-3.5-turbo",
-    "choices": [
-        {
-            "message": {
-                "role": "assistant",
-                "content": f"Dummy response",
-            },
-            "finish_reason": "stop",
-            "index": 0,
-        }
-    ],
-    "usage": {"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20},
-}
+app = FastAPI()
+
+
+def event_stream(completion: str):
+    try:
+        for i, chunk in enumerate(completion):
+            print(i, len(completion))
+            if i == len(completion) - 1:
+                finish_reason = "stop"
+            else:
+                finish_reason = None
+            yield f"{CreateChatCompletionResponse.sample_json(chunk, finish_reason)}\n\n"
+    except Exception as e:
+        yield f"data: {str(e)}\n\n"
+
+
+def send_response(request_body: CreateChatCompletionRequest):
+    prompt = request_body.messages[0].content
+    if request_body.stream:  # streaming을 사용할 경우
+        completion = prompt + "'s response"
+        return StreamingResponse(
+            event_stream(completion), media_type="text/event-stream"
+        )
+    else:  # streaming이 아닌 경우
+        return CreateChatCompletionResponse.sample_json(prompt)
 
 
 @app.post("/v1/chat/completions")
 def create_chat_completion(request_body: CreateChatCompletionRequest):
-    print("_______ create_chat_completion")
-    return response_json
-
-
-@app.post("/completions")
-def create_completion(request_body: CreateCompletionRequest):
-    print("_______ create_completion")
-    # TODO: Implement the function to return the completion
-    res = CreateCompletionResponse(model="gpt-3.5-turbo-0613", object="text_completion")
-    return res
+    return send_response(request_body)
