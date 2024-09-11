@@ -38,27 +38,25 @@ class CreateChatCompletionResponse(BaseModel):
     usage: CompletionUsage
 
     @staticmethod
-    def sample_json(content: str, finish_reason: str = None):
-        return json.dumps(
-            {
-                "id": "chatcmpl-abc123",
-                "object": "chat.completion",
-                "created": 1677858242,
-                "model": "gpt-4o",
-                "choices": [
-                    {
-                        "message": {
-                            "role": "assistant",
-                            "content": content,
-                        },
-                        "finish_reason": finish_reason,
-                        "index": 0,
-                    }
-                ],
-                "usage": {
-                    "prompt_tokens": 10,
-                    "completion_tokens": 10,
-                    "total_tokens": 20,
-                },
-            }
-        )
+    def sample(content: str, finish_reason: str = None):
+        return {
+            "id": "chatcmpl-abc123",
+            "object": "chat.completion",
+            "created": 1677858242,
+            "model": "gpt-4o",
+            "choices": [
+                {
+                    "message": {
+                        "role": "assistant",
+                        "content": content,
+                    },
+                    "finish_reason": finish_reason,
+                    "index": 0,
+                }
+            ],
+            "usage": {
+                "prompt_tokens": 10,
+                "completion_tokens": 10,
+                "total_tokens": 20,
+            },
+        }

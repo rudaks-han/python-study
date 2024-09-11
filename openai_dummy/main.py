@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -23,7 +24,9 @@ def event_stream(completion: str):
                 finish_reason = "stop"
             else:
                 finish_reason = None
-            yield f"{CreateChatCompletionResponse.sample_json(chunk, finish_reason)}\n\n"
+            result = CreateChatCompletionResponse.sample(chunk, finish_reason)
+            print("result", result)
+            yield json.dumps(result) + "\n\n"
     except Exception as e:
         yield f"data: {str(e)}\n\n"
 
@@ -36,7 +39,7 @@ def send_response(request_body: CreateChatCompletionRequest):
             event_stream(completion), media_type="text/event-stream"
         )
     else:  # streaming이 아닌 경우
-        return CreateChatCompletionResponse.sample_json(prompt)
+        return CreateChatCompletionResponse.sample(prompt)
 
 
 @app.post("/v1/chat/completions")
