@@ -1,3 +1,4 @@
+import json
 import threading
 import traceback
 
@@ -24,7 +25,7 @@ prompt = PromptTemplate.from_template(template=template)
 
 @app.get("/sync/chat")
 def sync_chat(query: str):
-    chain = prompt | llm
+    chain = prompt | llm | StrOutputParser()
     return chain.invoke({"query": query})
 
 
@@ -38,13 +39,10 @@ async def async_chat(query: str = Query(None)):
 def streaming_sync_chat(query: str):
     chain = prompt | llm | StrOutputParser()
 
-    print("___ streaming_sync_chat")
-
     def event_stream():
         try:
             for chunk in chain.stream({"query": query}):
-                if len(chunk) > 0:
-                    yield f"data: {chunk}\n\n"
+                yield f"data: {chunk}\n\n"
         except Exception as e:
             yield f"data: error : {str(e)}\n\n"
 

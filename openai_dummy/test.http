@@ -2,7 +2,7 @@ POST http://localhost:7777/v1/chat/completions
 content-Type: application/json
 
 {
-  "model": "gpt-4o-mini",
+  "model": "gpt-4o",
   "messages": [{"role": "user", "content": "Hi"}],
   "temperature": 0.7
 }
@@ -11,8 +11,16 @@ POST http://localhost:7777/v1/chat/completions
 content-Type: application/json
 
 {
-  "model": "gpt-4o-mini",
+  "model": "gpt-4o",
   "messages": [{"role": "user", "content": "Hi"}],
   "temperature": 0.7,
   "stream": true
 }
+###
+GET http://localhost:8000/sync/chat?query=한국의 수도는?
+###
+GET http://localhost:8000/async/chat?query=한국의 수도는?
+###
+GET http://localhost:8000/streaming_sync/chat?query=한국의 수도는?
+###
+GET http://localhost:8000/streaming_async/chat?query=한국의 수도는?

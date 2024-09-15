@@ -62,11 +62,12 @@ class CreateChatCompletionResponse(BaseModel):
             },
         }
 
+    @staticmethod
     def sample_streaming(content: str, finish_reason: str = None):
         return {
             "id": "chatcmpl-abc123",
             "object": "chat.completion",
-            "created": time.time(),
+            "created": 123456789,
             "model": "gpt-4o",
             "choices": [
                 {
@@ -75,9 +76,4 @@ class CreateChatCompletionResponse(BaseModel):
                     "index": 0,
                 }
             ],
-            "usage": {
-                "prompt_tokens": 10,
-                "completion_tokens": 10,
-                "total_tokens": 20,
-            },
         }

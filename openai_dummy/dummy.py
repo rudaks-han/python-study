@@ -1,8 +1,6 @@
-import asyncio
 import json
 import os
 import sys
-import time
 
 from starlette.responses import StreamingResponse
 
@@ -20,7 +18,6 @@ app = FastAPI()
 
 def event_stream(completion: str):
     try:
-        yield f""
         for i, token in enumerate(completion):
             if i == len(completion) - 1:
                 finish_reason = "stop"
@@ -52,7 +49,7 @@ def event_stream(completion: str):
 
 def send_response(request_body: CreateChatCompletionRequest):
     prompt = request_body.messages[0].content
-    completion = "This is dummy response"
+    completion = f"{prompt}의 응답 내용"
     print("request_body.stream", request_body.stream)
     if request_body.stream:  # streaming을 사용할 경우
         return StreamingResponse(
