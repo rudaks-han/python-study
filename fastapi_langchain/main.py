@@ -13,25 +13,16 @@ load_dotenv()
 
 app = FastAPI()
 
-llm = ChatOpenAI(
-    temperature=0, model_name="gpt-4o-mini", base_url="http://localhost:7777/v1"
-)
+llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini")
 
 template = "아래 질문에 대한 답변을 해주세요. \n{query}"
 prompt = PromptTemplate.from_template(template=template)
 
 
-def get_thread_id():
-    return threading.get_ident()
-
-
 @app.get("/sync/chat")
 def sync_chat(query: str):
-    thread_id = get_thread_id()
     chain = prompt | llm | StrOutputParser()
-    print(f"[{thread_id}]>> start")
     response = chain.invoke({"query": query})
-    print(f"[{thread_id}]<< end")
     return response
 
 
@@ -46,13 +37,15 @@ async def async_chat(query: str = Query(None)):
 
 @app.get("/streaming_sync/chat")
 def streaming_sync_chat(query: str = Query(None, min_length=3, max_length=50)):
-    chain = prompt | llm | StrOutputParser()
+    chain = prompt | llm
 
     def event_stream():
         try:
             for chunk in chain.stream({"query": query}):
-                if len(chunk) > 0:
-                    yield f"data: {chunk}\n\n"
+                print(chunk)
+                yield f"{chunk}\n\n"
+                # if len(chunk) > 0:
+                #     yield f"data: {chunk}\n\n"
         except Exception as e:
             yield f"data: {str(e)}\n\n"
 

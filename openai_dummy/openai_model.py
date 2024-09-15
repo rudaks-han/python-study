@@ -1,4 +1,5 @@
 import json
+import time
 from typing import List, Union, Optional
 
 from pydantic import BaseModel
@@ -42,7 +43,7 @@ class CreateChatCompletionResponse(BaseModel):
         return {
             "id": "chatcmpl-abc123",
             "object": "chat.completion",
-            "created": 1677858242,
+            "created": time.time(),
             "model": "gpt-4o",
             "choices": [
                 {
@@ -50,6 +51,26 @@ class CreateChatCompletionResponse(BaseModel):
                         "role": "assistant",
                         "content": content,
                     },
+                    "finish_reason": finish_reason,
+                    "index": 0,
+                }
+            ],
+            "usage": {
+                "prompt_tokens": 10,
+                "completion_tokens": 10,
+                "total_tokens": 20,
+            },
+        }
+
+    def sample_streaming(content: str, finish_reason: str = None):
+        return {
+            "id": "chatcmpl-abc123",
+            "object": "chat.completion",
+            "created": time.time(),
+            "model": "gpt-4o",
+            "choices": [
+                {
+                    "delta": {"content": content},
                     "finish_reason": finish_reason,
                     "index": 0,
                 }

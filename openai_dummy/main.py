@@ -1,47 +1,66 @@
-import json
-import os
-import sys
+import threading
+import traceback
 
+from dotenv import load_dotenv
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_openai import ChatOpenAI
+from openai import base_url
 from starlette.responses import StreamingResponse
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from openai_dummy.openai_model import (
-    CreateChatCompletionRequest,
-    CreateChatCompletionResponse,
-)
+load_dotenv()
 
 app = FastAPI()
 
+llm = ChatOpenAI(
+    temperature=0, model_name="gpt-4o-mini", base_url="http://localhost:7777/v1"
+)
 
-def event_stream(completion: str):
-    try:
-        for i, chunk in enumerate(completion):
-            print(i, len(completion))
-            if i == len(completion) - 1:
-                finish_reason = "stop"
-            else:
-                finish_reason = None
-            result = CreateChatCompletionResponse.sample(chunk, finish_reason)
-            print("result", result)
-            yield json.dumps(result) + "\n\n"
-    except Exception as e:
-        yield f"data: {str(e)}\n\n"
+template = "{query}"
+prompt = PromptTemplate.from_template(template=template)
 
 
-def send_response(request_body: CreateChatCompletionRequest):
-    prompt = request_body.messages[0].content
-    if request_body.stream:  # streaming을 사용할 경우
-        completion = prompt + "'s response"
-        return StreamingResponse(
-            event_stream(completion), media_type="text/event-stream"
-        )
-    else:  # streaming이 아닌 경우
-        return CreateChatCompletionResponse.sample(prompt)
+@app.get("/sync/chat")
+def sync_chat(query: str):
+    chain = prompt | llm
+    return chain.invoke({"query": query})
 
 
-@app.post("/v1/chat/completions")
-def create_chat_completion(request_body: CreateChatCompletionRequest):
-    return send_response(request_body)
+@app.get("/async/chat")
+async def async_chat(query: str = Query(None)):
+    chain = prompt | llm
+    return await chain.ainvoke({"query": query})
+
+
+@app.get("/streaming_sync/chat")
+def streaming_sync_chat(query: str):
+    chain = prompt | llm | StrOutputParser()
+
+    print("___ streaming_sync_chat")
+
+    def event_stream():
+        try:
+            for chunk in chain.stream({"query": query}):
+                if len(chunk) > 0:
+                    yield f"data: {chunk}\n\n"
+        except Exception as e:
+            yield f"data: error : {str(e)}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+@app.get("/streaming_async/chat")
+async def streaming_async(query: str = Query(None, min_length=3, max_length=50)):
+    chain = prompt | llm | StrOutputParser()
+
+    async def event_stream():
+        try:
+            async for chunk in chain.astream({"query": query}):
+                if len(chunk) > 0:
+                    yield f"data: {chunk}\n\n"
+        except Exception as e:
+            yield f"data: {str(e)}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
