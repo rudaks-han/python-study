@@ -18,9 +18,15 @@ class CreateChatCompletionRequest(BaseModel):
     stream: Optional[bool] = False
 
 
-class Choice(BaseModel):
-    text: str = "This is a test."
+class MessageChoice(BaseModel):
+    message: dict
     finish_reason: str = "stop"
+    index: int = 0
+
+
+class DeltaChoice(BaseModel):
+    delta: dict
+    finish_reason: Optional[str] = None
     index: int = 0
 
 
@@ -35,45 +41,62 @@ class CreateChatCompletionResponse(BaseModel):
     object: str
     created: int
     model: str
-    choices: List[Choice]
-    usage: CompletionUsage
+    choices: List[MessageChoice]
+    usage: Optional[CompletionUsage]
 
     @staticmethod
-    def sample(content: str, finish_reason: str = None):
-        return {
-            "id": "chatcmpl-abc123",
-            "object": "chat.completion",
-            "created": time.time(),
-            "model": "gpt-4o",
-            "choices": [
-                {
-                    "message": {
-                        "role": "assistant",
-                        "content": content,
-                    },
-                    "finish_reason": finish_reason,
-                    "index": 0,
-                }
+    def sample(content: str):
+        return CreateChatCompletionResponse(
+            id="chatcmpl-abc123",
+            object="chat.completion",
+            created=int(time.time()),
+            model="gpt-4o",
+            choices=[
+                MessageChoice(
+                    message={"role": "assistant", "content": content},
+                    finish_reason="stop",
+                    index=0,
+                )
             ],
-            "usage": {
-                "prompt_tokens": 10,
-                "completion_tokens": 10,
-                "total_tokens": 20,
-            },
-        }
+            usage=CompletionUsage(
+                prompt_tokens=10, completion_tokens=10, total_tokens=20
+            ),
+        )
+
+
+class CreateChatCompletionStreamingResponse(BaseModel):
+    id: str
+    object: str
+    created: int
+    model: str
+    choices: List[DeltaChoice]
 
     @staticmethod
-    def sample_streaming(content: str, finish_reason: str = None):
-        return {
-            "id": "chatcmpl-abc123",
-            "object": "chat.completion",
-            "created": 123456789,
-            "model": "gpt-4o",
-            "choices": [
-                {
-                    "delta": {"content": content},
-                    "finish_reason": finish_reason,
-                    "index": 0,
-                }
+    def sample(content: str, finish_reason: Optional[str] = None):
+        return CreateChatCompletionStreamingResponse(
+            id="chatcmpl-abc123",
+            object="chat.completion",
+            created=int(time.time()),
+            model="gpt-4o",
+            choices=[
+                DeltaChoice(
+                    delta={"content": content},
+                    finish_reason=finish_reason,
+                    index=0,
+                )
             ],
-        }
+        )
+
+
+if __name__ == "__main__":
+    # print(
+    #     CreateChatCompletionResponse.sample(
+    #         content="안녕하세요", finish_reason="stop"
+    #     ).model_dump_json()
+    # )
+
+    print(
+        CreateChatCompletionStreamingResponse.sample(
+            content="안녕하세요", finish_reason="stop"
+        ).model_dump_json()
+    )

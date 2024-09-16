@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 
@@ -11,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from openai_dummy.openai_model import (
     CreateChatCompletionRequest,
     CreateChatCompletionResponse,
+    CreateChatCompletionStreamingResponse,
 )
 
 app = FastAPI()
@@ -23,8 +23,10 @@ def event_stream(completion: str):
                 finish_reason = "stop"
             else:
                 finish_reason = None
-            res = CreateChatCompletionResponse.sample_streaming(token, finish_reason)
-            yield f"data: {json.dumps(res)}\n\n"
+            sample = CreateChatCompletionStreamingResponse.sample(
+                content=token, finish_reason=finish_reason
+            )
+            yield f"data: {sample.model_dump_json()}\n\n"
         yield "data: [DONE]\n\n"
     except Exception as e:
         yield f"error occurred\n\n"
@@ -50,7 +52,6 @@ def event_stream(completion: str):
 def send_response(request_body: CreateChatCompletionRequest):
     prompt = request_body.messages[0].content
     completion = f"{prompt}의 응답 내용"
-    print("request_body.stream", request_body.stream)
     if request_body.stream:  # streaming을 사용할 경우
         return StreamingResponse(
             event_stream(completion),
@@ -58,7 +59,7 @@ def send_response(request_body: CreateChatCompletionRequest):
         )
 
     else:  # streaming이 아닌 경우
-        return CreateChatCompletionResponse.sample(completion)
+        return CreateChatCompletionResponse.sample(content=completion)
 
 
 @app.post("/v1/chat/completions")
