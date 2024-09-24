@@ -1,6 +1,7 @@
 from typing import Annotated
 from urllib.request import Request
 
+from fastapi.exceptions import RequestValidationError
 from starlette.responses import JSONResponse
 
 from error_handlings.custom_exception_handlers import (
@@ -31,10 +32,19 @@ async def uvicorn_exception_handler(request: Request, exc: CustomException):
     )
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    print(exc)
+    return JSONResponse(
+        status_code=400,
+        content="value error....",
+    )
+
+
 @app.get("/users/{user_id}")
 def find(
     user_id: str,
-    query: Annotated[str, Query(description="검색어", min_length=1, max_length=512)],
+    name: Annotated[str, Query(description="검색어", min_length=1, max_length=512)],
 ):  # processed sequentially
 
     if user_id == "unknown":
