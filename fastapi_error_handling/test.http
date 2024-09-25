@@ -1,3 +1,8 @@
-GET localhost:8000/users/unknown
-###
-GET localhost:8000/users/resourceNotFound
+### HTTPException
+GET localhost:8000/users?user_id=not_found
+### ValueError
+GET localhost:8000/users
+### CustomException
+GET localhost:8000/custom_exception/error
+### NotFoundException
+GET localhost:8000/users/not_found
