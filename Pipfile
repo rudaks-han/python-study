@@ -16,6 +16,8 @@ langchain-openai = "*"
 python-dotenv = "*"
 "uvicorn[standard]" = "*"
 fastapi = {extras = ["standard"], version = "*"}
+pytype = "*"
+pyright = "*"
 
 [dev-packages]
 
