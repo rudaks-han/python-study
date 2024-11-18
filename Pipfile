@@ -18,6 +18,8 @@ python-dotenv = "*"
 fastapi = {extras = ["standard"], version = "*"}
 pytype = "*"
 pyright = "*"
+beautifulsoup4 = "*"
+html5lib = "*"
 
 [dev-packages]
 
